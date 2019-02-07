@@ -7,7 +7,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <TypeAhead config={{dataSrc: 'http://demo2045363.mockable.io/', caseSensitiveMatch: false, autoComplete: 'off'}} />
+        <TypeAhead config={{dataSrc: 'http://demo2045363.mockable.io/', caseSensitiveMatch: false, autoComplete: 'off', placeHolder: 'Type here', spellCheck: 'false'}} />
       </div>
     );
   }

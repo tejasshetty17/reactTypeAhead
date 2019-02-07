@@ -11,18 +11,20 @@ class TypeAhead extends Component {
             dataSrc: PropTypes.string.isRequired,
             caseSensitiveMatch: PropTypes.bool,
             autoComplete: PropTypes.string,
+            placeHolder: PropTypes.string,
+            spellCheck: PropTypes.string,
         }),
     }
 
     constructor(props) {
         super(props);
-
         this.state = {
             selectedSuggestion: 0,
             suggestionList: [],
             isSuggestionVisible: false,
             enteredValue: '',
         };
+        this.handleChange = this.handleChange.bind(this);
     }
 
     fetchSuggestions(url, inputVal){
@@ -44,16 +46,22 @@ class TypeAhead extends Component {
             if (suggestions.length === 0){
                 suggestions.push('No matches found!!');
             }
-            this.setState({ suggestionList: suggestions, selectedSuggestion: 0, isSuggestionVisible: true, enteredValue: inputVal });
+            this.setState({ suggestionList: suggestions, selectedSuggestion: 0, isSuggestionVisible: true});
         })
         .catch(err => {
             console.log(err);
-            return ['something went wrong!!'];
+            this.setState({
+                suggestionList: ['something went wrong!!'],
+                selectedSuggestion: 0,
+                isSuggestionVisible: true,
+                // enteredValue: inputVal
+            });
         });
     };
 
-    onChange = event => {
-        const inputValue = event.currentTarget.value;
+    handleChange = event => {
+        this.setState({enteredValue: event.target.value});
+        const inputValue = event.target.value;
         this.fetchSuggestions(`${this.props.config.dataSrc}?q=${inputValue}`, inputValue);
     };
 
@@ -62,7 +70,7 @@ class TypeAhead extends Component {
             suggestionList: [],
             selectedSuggestion: 0,
             isSuggestionVisible: false,
-            enteredValue: event.currentTarget.innerText,
+            enteredValue: event.target.innerText,
         });
     };
 
@@ -75,7 +83,6 @@ class TypeAhead extends Component {
                 {this.state.suggestionList.map((suggestion, index) => {
                     let className;
 
-                    // Flag the active suggestion with a class
                     if (index === this.state.selectedSuggestion) {
                         className = "suggestion-active";
                     }
@@ -97,9 +104,11 @@ class TypeAhead extends Component {
             <Fragment>
                 <input
                     type="text"
-                    onChange={this.onChange}
+                    onChange={this.handleChange}
                     value={this.state.enteredValue}
                     autoComplete={this.props.config.autoComplete}
+                    placeholder={this.props.config.placeHolder}
+                    spellCheck={this.props.config.spellCheck}
                 />
                 {suggestionsListMarkup}
             </Fragment>
